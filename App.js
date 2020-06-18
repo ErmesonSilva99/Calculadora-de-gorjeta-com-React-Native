@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 import React, {useState} from 'react';
 import {Picker} from 'react-native';
 
@@ -78,18 +79,22 @@ const PickerSelect = styled.Picker`
 export default () => {
   const options = [
     {
+      key: parseInt(Math.random() * 1),
       porcent: 5,
       label: '5%',
     },
     {
+      key: parseInt(Math.random() * 1),
       porcent: 10,
       label: '10%',
     },
     {
+      key: parseInt(Math.random() * 1),
       porcent: 15,
       label: '15%',
     },
     {
+      key: parseInt(Math.random() * 1),
       porcent: 20,
       label: '20%',
     },
@@ -120,7 +125,7 @@ export default () => {
           keyboardType="numeric"
           value={bill}
           onChangeText={n => {
-            setBill(n);
+            setBill(parseFloat(Comma(n)));
             setTip((options[indexValue].porcent / 100) * parseFloat(n));
           }}
         />
@@ -128,12 +133,18 @@ export default () => {
       <PickerSelect
         selectedValue={porcent}
         onValueChange={(itemValue, itemIndex) => {
-          setPorcent(itemValue);
-
-          setTip((options[itemIndex].porcent / 100) * bill);
+          // eslint-disable-next-line no-lone-blocks
+          {
+            bill > 0 && setPorcent(itemValue);
+            setTip((options[itemIndex].porcent / 100) * bill);
+          }
         }}>
         {options.map(item => (
-          <PickerSelect.Item label={item.label} value={item.label} />
+          <PickerSelect.Item
+            key={item.key}
+            label={item.label}
+            value={item.label}
+          />
         ))}
       </PickerSelect>
       <ResultArea>
@@ -141,7 +152,7 @@ export default () => {
           <ResultItemTitle>Valor da conta</ResultItemTitle>
           <ResultItemValue>
             <Bold>
-              R$ {bill !== '' ? Comma(parseFloat(bill).toFixed(2)) : '----'}
+              R$ {bill > 0 ? Comma(parseFloat(bill).toFixed(2)) : '----'}
             </Bold>
           </ResultItemValue>
         </SeparateItem>
@@ -151,7 +162,7 @@ export default () => {
         <SeparateItem>
           <ResultItemTitle>Valor da gorjeta</ResultItemTitle>
           <ResultItemValue>
-            <Bold>R$ {bill !== '' ? Comma(tip.toFixed(2)) : '----'}</Bold>
+            <Bold>R$ {bill > 0 ? Comma(tip.toFixed(2)) : '----'}</Bold>
           </ResultItemValue>
         </SeparateItem>
 
@@ -162,9 +173,7 @@ export default () => {
           <ResultItemValue>
             <Bold>
               R${' '}
-              {bill !== ''
-                ? Comma((parseFloat(bill) + tip).toFixed(2))
-                : '----'}
+              {bill > 0 ? Comma((parseFloat(bill) + tip).toFixed(2)) : '----'}
             </Bold>
           </ResultItemValue>
         </SeparateItem>
