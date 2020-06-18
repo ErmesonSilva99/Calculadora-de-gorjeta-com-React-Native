@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import {Picker} from 'react-native';
+
 import styled from 'styled-components/native';
 
 const Container = styled.SafeAreaView`
@@ -67,9 +69,36 @@ const Bold = styled.Text`
   font-weight: 900;
 `;
 
+const PickerSelect = styled.Picker`
+  height: 50px;
+  width: 100px;
+  border: 1px solid #000;
+`;
+
 export default () => {
+  const options = [
+    {
+      porcent: 5,
+      label: '5%',
+    },
+    {
+      porcent: 10,
+      label: '10%',
+    },
+    {
+      porcent: 15,
+      label: '15%',
+    },
+    {
+      porcent: 20,
+      label: '20%',
+    },
+  ];
+
   const [bill, setBill] = useState('');
   const [tip, setTip] = useState(0);
+  const [indexValue, setIndexValue] = useState(1);
+  const [porcent, setPorcent] = useState(options[indexValue].label);
 
   //Substitui o ponto '.' pela vígula ','
   function Comma(value) {
@@ -92,16 +121,28 @@ export default () => {
           value={bill}
           onChangeText={n => {
             setBill(n);
-            setTip(parseFloat(n) * 0.1);
+            setTip((options[indexValue].porcent / 100) * parseFloat(n));
           }}
         />
       </InputContainer>
+      <PickerSelect
+        selectedValue={porcent}
+        onValueChange={(itemValue, itemIndex) => {
+          setPorcent(itemValue);
 
+          setTip((options[itemIndex].porcent / 100) * bill);
+        }}>
+        {options.map(item => (
+          <PickerSelect.Item label={item.label} value={item.label} />
+        ))}
+      </PickerSelect>
       <ResultArea>
         <SeparateItem>
           <ResultItemTitle>Valor da conta</ResultItemTitle>
           <ResultItemValue>
-            <Bold>R$ {bill !== '' ? Comma(parseFloat(bill).toFixed(2)) : '----'}</Bold>
+            <Bold>
+              R$ {bill !== '' ? Comma(parseFloat(bill).toFixed(2)) : '----'}
+            </Bold>
           </ResultItemValue>
         </SeparateItem>
 
@@ -113,11 +154,18 @@ export default () => {
             <Bold>R$ {bill !== '' ? Comma(tip.toFixed(2)) : '----'}</Bold>
           </ResultItemValue>
         </SeparateItem>
+
         <LineSeparate />
+
         <SeparateItem>
           <ResultItemTitle>Valor total</ResultItemTitle>
           <ResultItemValue>
-            <Bold>R$ {bill !== '' ? Comma((parseFloat(bill) + tip).toFixed(2)) : '----'}</Bold>
+            <Bold>
+              R${' '}
+              {bill !== ''
+                ? Comma((parseFloat(bill) + tip).toFixed(2))
+                : '----'}
+            </Bold>
           </ResultItemValue>
         </SeparateItem>
       </ResultArea>
