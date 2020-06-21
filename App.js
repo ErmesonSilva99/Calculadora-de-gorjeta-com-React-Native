@@ -1,5 +1,5 @@
 /* eslint-disable radix */
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Picker} from 'react-native';
 
 import styled from 'styled-components/native';
@@ -76,6 +76,26 @@ const PickerSelect = styled.Picker`
   border: 1px solid #000;
 `;
 
+const Circle = styled.View`
+  background-color: #00f300;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  border-top-right-radius: 50px;
+  border-top-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  position: absolute;
+  right: 108px;
+  top: 6px;
+  width: 40px;
+  height: 30px;
+`;
+
+const Green = styled.Text`
+  color: #fff;
+  font-size: 15px;
+`;
+
 export default () => {
   const options = [
     {
@@ -117,6 +137,9 @@ export default () => {
   return (
     <Container>
       <HeaderText>Gorjeta</HeaderText>
+      <Circle>
+        <Green>{porcent}</Green>
+      </Circle>
 
       <InputContainer>
         <InputText>R$</InputText>
@@ -134,10 +157,9 @@ export default () => {
         selectedValue={porcent}
         onValueChange={(itemValue, itemIndex) => {
           // eslint-disable-next-line no-lone-blocks
-          {
-            bill > 0 && setPorcent(itemValue);
-            setTip((options[itemIndex].porcent / 100) * bill);
-          }
+          setTip((options[itemIndex].porcent / 100) * bill);
+          setIndexValue(itemIndex);
+          setPorcent(options[itemIndex].label);
         }}>
         {options.map(item => (
           <PickerSelect.Item
